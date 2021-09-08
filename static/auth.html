@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Tab</title>
+</head>
+
+<body>
+    <div class="container">
+        <button id="authentication">Click for private data</button>
+        <button id="reftok">Renew access token</button>
+        <button id="new-auth">Click for private data for new token</button>
+    </div>
+
+    <script>
+
+        const refBtn = document.getElementById('reftok');
+        const authBtn = document.getElementById('authentication')
+        const newBtn=document.getElementById('new-auth')
+        newBtn.addEventListener('click',newAuth)
+        authBtn.addEventListener('click', sendReq)
+        refBtn.addEventListener('click', newTok)
+
+
+        async function sendReq() {
+            const result = await fetch('/api/authentication', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: sessionStorage.getItem('token'),
+
+                })
+            }).then((res, req) => {
+               
+                return res.json()
+            })
+
+            console.log(result);
+            if (result.status === 'ok') {
+
+                console.log('authentication is accessed ')
+                const para = document.createElement('p');
+                para.textContent = 'this is the private data';
+                document.body.appendChild(para);
+
+                alert('User authenticated')
+            } else {
+                alert(result.error)
+
+               
+            }
+
+        }
+
+        async function newAuth(){
+            const result2 = await fetch('/api/auth2', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+
+                    },
+                    body: JSON.stringify({
+                        token2: sessionStorage.getItem('newtoken'),
+
+                    })
+
+
+                }).then((res, req) => {
+                    
+                    return res.json()
+                })
+
+                if (result2.status === 'ok') {
+                    console.log('authentication is accessed for new token ')
+                    const para2 = document.createElement('p');
+                    para2.textContent = 'this is the private data for new token';
+                    document.body.appendChild(para2);
+                alert('User authenticated for new token')
+                }else{
+                    alert(result2.error)
+                    console.log('user is not authenticated with new token')
+                }
+        }
+       
+
+
+        async function newTok() {
+            const result = await fetch('/api/ref/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+
+                },
+                body: JSON.stringify({
+                    token: sessionStorage.getItem('reftoken'),
+
+                })
+            }).then((res, req) => {
+
+                return res.json()
+            })
+
+            console.log(result);
+            if (result.status === 'ok') {
+                sessionStorage.setItem('newtoken', result.data)
+                console.log('renewed access token ', result.data)
+                alert('renewed access token')
+            } else {
+                alert(result.error)
+            }
+
+
+        }
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Tab</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="login-form">
+            <input type="text" autocomplete="off" id=username placeholder="Username">
+            <input type="password" autocomplete="off"id=password placeholder="Password">
+           <button id="auth-tab" ><input type="button" id=submit value="Submit Form"></button> 
+
+        </form>
+        <button id="register"><a href="index.html" id="registerref">Register</a></button>
+       
+
+        <script>
+            const form = document.getElementById('submit');
+            form.addEventListener('click', registerUser);
+
+             async function registerUser(event) {
+                event.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                const result= await fetch('/api/login',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({
+                        username,
+                        password
+                    })
+                }).then((res,req)=>{
+
+                //  document.getElementById('auth-tab').onclick=function(){
+                     window.location.replace(`auth.html`)
+                //  }
+                    
+                
+               return  res.json()})
+
+                console.log(result);
+                if(result.status==='ok'){
+                   sessionStorage.setItem('token',result.data)
+                   sessionStorage.setItem('reftoken',result.data2)
+                    console.log('token is accessed ', result.data)
+                    console.log('Refresh tokens',result.data2)
+                    alert('Succeess')
+                }else{
+                    alert(result.error)
+                }
+
+
+
+            }
+
+            
+
+        </script>
+    </div>
+
+</body>
+
+</html>
